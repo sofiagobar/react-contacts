@@ -14,13 +14,19 @@ class ContactList extends Component {
   }
 
   handleDeleteContact(id) {
-    this.setState((prevState) => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id)
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(contact => contact.id !== id)
     }))
   }
 
   handleResetContacts() {
     this.setState({ contacts: contactsData })
+  }
+
+  handleCreateContact(contact) {
+    this.setState(({ contacts }) => ({
+      contacts: [contact, ...contacts]
+    }))
   }
 
   render() {
@@ -30,7 +36,7 @@ class ContactList extends Component {
         <>
           <div className="row mb-2">
             <div className="col">
-              <ContactForm />
+              <ContactForm onCreateContact={(contact) => this.handleCreateContact(contact)}/>
             </div>
           </div>
           <div className="row mb-2">

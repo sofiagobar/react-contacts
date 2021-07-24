@@ -30,6 +30,7 @@ const validations = {
 
 
 class ContactForm extends Component {
+
   state = {
     contact: {
       name: '',
@@ -62,16 +63,41 @@ class ContactForm extends Component {
     }))
   }
 
+  handleRandomAvatarClick() {
+    this.setState(({ contact }) => ({
+      contact: {
+        ...contact,
+        avatar: faker.image.avatar()
+      }
+    }))
+  }
+
+  isFormValid() {
+    const { errors } = this.state;
+    return !Object.keys(errors).some(key => errors[key] !== undefined);
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    if (this.isFormValid()) {
+      const { contact } = this.state;
+      contact.id = faker.datatype.uuid();
+
+      this.props.onCreateContact(contact);
+    }
+    
+  }
+
   render() {
     const { contact, errors } = this.state;
-    const isFormValid = !Object.keys(errors).some(key => errors[key] !== undefined)
     return (
-      <div className="row">
+      <div className="row mb-3">
         <div className="col-12 col-sm-2">
-          <img src={contact.avatar} alt="Avatar" className="img-thumbnail"/>
+          <img src={contact.avatar} alt="Avatar" className="img-thumbnail w-100"/>
         </div>
         <div className="col-12 col-sm-10">
-          <form action="">
+          <form onSubmit={(event) => this.handleSubmit(event)}>
 
             <div className="input-group mb-1">
               <span className="input-group-text"><i className="fa fa-user fa-fw" /></span>
@@ -98,11 +124,15 @@ class ContactForm extends Component {
               <span className="input-group-text"><i className="fa fa-picture-o fa-fw" /></span>
               <input name="avatar" type="text" className={`form-control ${errors.avatar ? 'is-invalid' : ''}`} placeholder="Image url..." value={contact.avatar}
                 onChange={(event) => this.handleInputChange(event)} />
-              <button className="btn btn-outline-secondary" type="button"><i className="fa fa-refresh fa-fw" /></button>
+              <button className="btn btn-outline-secondary" type="button" onClick={() => this.handleRandomAvatarClick()}><i className="fa fa-refresh fa-fw" /></button>
               {errors.avatar && <div className="invalid-feedback">{errors.avatar}</div>}
             </div>
 
-            <button className="btn btn-primary" disabled={!isFormValid}>create contact</button>
+            <div className="row justify-content-center">
+              <div className="col-12 col-sm-4">
+                <button className="btn btn-primary w-100" disabled={!this.isFormValid()}>create contact</button>
+              </div>
+            </div>
 
           </form>
         </div>
@@ -110,6 +140,11 @@ class ContactForm extends Component {
     );
   }
 }
+
+ContactForm.defaultProps = {
+  onCreateContact: () => {}
+}
+
 
 export default ContactForm;
 

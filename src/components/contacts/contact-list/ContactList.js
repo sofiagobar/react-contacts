@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import ContactItem from '../contact-item/ContactItem';
 import contactsData from '../../../data/contacts.json';
+import ContactForm from '../contact-form/ContactForm';
 
 class ContactList extends Component {
 
@@ -27,6 +28,11 @@ class ContactList extends Component {
     return (
       contacts &&
         <>
+          <div className="row mb-2">
+            <div className="col">
+              <ContactForm />
+            </div>
+          </div>
           <div className="row mb-2">
             <div className="col">
               <ul className="list-group">

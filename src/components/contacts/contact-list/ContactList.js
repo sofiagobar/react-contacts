@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import ContactItem from '../contact-item/ContactItem';
 import contactsData from '../../../data/contacts.json';
+import ContactForm from '../contact-form/ContactForm';
 
 class ContactList extends Component {
 
@@ -13,8 +14,8 @@ class ContactList extends Component {
   }
 
   handleDeleteContact(id) {
-    this.setState((prevState) => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id)
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(contact => contact.id !== id)
     }))
   }
 
@@ -22,11 +23,22 @@ class ContactList extends Component {
     this.setState({ contacts: contactsData })
   }
 
+  handleCreateContact(contact) {
+    this.setState(({ contacts }) => ({
+      contacts: [contact, ...contacts]
+    }))
+  }
+
   render() {
     const { contacts } = this.state;
     return (
       contacts &&
         <>
+          <div className="row mb-2">
+            <div className="col">
+              <ContactForm onCreateContact={(contact) => this.handleCreateContact(contact)}/>
+            </div>
+          </div>
           <div className="row mb-2">
             <div className="col">
               <ul className="list-group">

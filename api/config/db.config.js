@@ -11,4 +11,13 @@ mongoose.connect(MONGODB_URI, { useCreateIndex: true, useUnifiedTopology: true, 
 
 process.on('SIGINT', () => {
   mongoose.disconnect()
+    .then(() => {
+      console.info('Successfully disconected mongodb');
+      process.exit(0);
+    })
+    .catch(error => {
+      console.error('An error ocurred trying to disconect mongoose', error);
+      process.exit(1);
+    });
+  
 })

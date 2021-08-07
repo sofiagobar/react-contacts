@@ -1,26 +1,33 @@
 import { Component } from 'react';
 import ContactItem from '../contact-item/ContactItem';
-import contactsData from '../../../data/contacts.json';
 import ContactForm from '../contact-form/ContactForm';
+
+import contactsService from '../../../services/contacts-service';
 
 class ContactList extends Component {
 
   state = {
-    contacts: []
+    contacts: [],
+    isLoading: true
+  }
+
+  fetchContacts() {
+    contactsService.list()
+      .then(contacts => this.setState({ contacts, isLoading: false }))
+      .catch(error => {
+        this.setState({ isLoading: false })
+        console.error(error)
+      });
   }
 
   componentDidMount() {
-    this.setState({ contacts: contactsData })
+    this.fetchContacts();
   }
 
   handleDeleteContact(id) {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(contact => contact.id !== id)
-    }))
-  }
-
-  handleResetContacts() {
-    this.setState({ contacts: contactsData })
+    contactsService.remove(id)
+      .then(() => this.fetchContacts())
+      .catch(error => console.error(error));
   }
 
   handleCreateContact(contact) {
@@ -30,7 +37,7 @@ class ContactList extends Component {
   }
 
   render() {
-    const { contacts } = this.state;
+    const { contacts, isLoading } = this.state;
     return (
       contacts &&
         <>
@@ -39,22 +46,19 @@ class ContactList extends Component {
               <ContactForm onCreateContact={(contact) => this.handleCreateContact(contact)}/>
             </div>
           </div>
-          <div className="row mb-2">
-            <div className="col">
-              <ul className="list-group">
-                {contacts.map(contact =>
-                  <li key={contact.id} className="list-group-item list-group-item-action">
-                    <ContactItem {...contact} onDeleteContact={(id) => this.handleDeleteContact(id)} />
-                  </li>
-                )}
-              </ul>
+          {isLoading ? (<i className="fa fa-gear fa-spin"></i>) : (
+            <div className="row mb-2">
+              <div className="col">
+                <ul className="list-group">
+                  {contacts.map(contact =>
+                    <li key={contact.id} className="list-group-item list-group-item-action">
+                      <ContactItem {...contact} onDeleteContact={(id) => this.handleDeleteContact(id)} />
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
-          </div>
-          <div className="row justify-content-center">
-            <div className="col-12 col-md-4">
-              <button className="btn btn-primary w-100" onClick={() => this.handleResetContacts()}>restart contacts</button>
-            </div>
-          </div>
+          )}
         </>
     );
   }

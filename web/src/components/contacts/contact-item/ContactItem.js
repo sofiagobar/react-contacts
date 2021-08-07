@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import './ContactItem.css';
 
 function ContactItem({ id, name, email, avatar, phone, onDeleteContact }) {
@@ -10,6 +11,7 @@ function ContactItem({ id, name, email, avatar, phone, onDeleteContact }) {
           <h5 className="mb-1">{name}</h5>
           { email && <p className="m-0 text-muted"><i className="fa fa-envelope fa-fw me-1" />{email}</p> }
           { phone && <p className="m-0 text-muted"><i className="fa fa-phone fa-fw me-1" />{phone}</p> }
+          <Link to={`/contacts/${id}`} className="stretched-link"/>
         </div>
       </div>
       <div>

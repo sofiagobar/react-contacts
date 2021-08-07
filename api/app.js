@@ -1,12 +1,16 @@
 const createError = require('http-errors');
 const express = require('express');
 const mongoose = require('mongoose');
+const logger = require('morgan');
 
 require('./config/db.config');
+const cors = require('./config/cors.config');
 
 const app = express();
 
 /** Middlewares */
+app.use(logger('dev'));
+app.use(cors);
 app.use(express.json());
 
 /** Routes */
@@ -24,6 +28,10 @@ app.use((error, req, res, next) => {
     error = createError(404, 'Resource not found');
   } else if (!error.status) {
     error = createError(500, error);
+  }
+
+  if (error.status >= 500) {
+    console.error(error);
   }
 
   const data = {};

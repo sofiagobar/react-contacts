@@ -1,4 +1,3 @@
-const createError = require('http-errors');
 const Contact = require('../models/contact.model');
 
 module.exports.list = (req, res, next) => {
@@ -8,26 +7,12 @@ module.exports.list = (req, res, next) => {
 }
 
 module.exports.detail = (req, res, next) => {
-  Contact.findById(req.params.id)
-    .then(contact => {
-      if (!contact) {
-        next(createError(404, 'Contact not found'))
-      } else {
-        res.json(contact);
-      }
-    })
-    .catch(error => next(error))
+  res.json(req.contact);
 }
 
 module.exports.delete = (req, res, next) => {
-  Contact.findByIdAndDelete(req.params.id)
-    .then(contact => {
-      if (!contact) {
-        next(createError(404, 'Contact not found'))
-      } else {
-        res.status(204).send();
-      }
-    })
+  Contact.deleteOne({ _id: req.contact.id })
+    .then(() => res.status(204).send())
     .catch(error => next(error))
 }
 
@@ -39,13 +24,9 @@ module.exports.create = (req, res, next) => {
 
 module.exports.edit = (req, res, next) => {
   const data = { name, email, phone, avatar } = req.body;
-  Contact.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true })
-    .then(contact => {
-      if (!contact) {
-        next(createError(404, 'Contact not found'))
-      } else {
-        res.json(contact);
-      }
-    })
+  const contact = req.contact;
+  Object.assign(contact, data);
+  contact.save()
+    .then(contact => res.json(contact))
     .catch(error => next(error))
 }

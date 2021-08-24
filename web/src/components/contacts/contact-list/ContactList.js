@@ -3,26 +3,46 @@ import ContactItem from '../contact-item/ContactItem';
 import ContactForm from '../contact-form/ContactForm';
 
 import contactsService from '../../../services/contacts-service';
+import { useEffect, useState } from 'react/cjs/react.production.min';
 
-class ContactList extends Component {
+function ContactList() {
 
-  state = {
+  const [contacts, setContacts] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
+  /*state = {
     contacts: [],
     isLoading: true
+  }*/
+
+  function fetchContacts() {
+    contactsService.list()
+      .then(response => {
+        setContacts(response)
+        setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        console.error(error)
+      });
   }
 
-  fetchContacts() {
+  /*fetchContacts() {
     contactsService.list()
       .then(contacts => this.setState({ contacts, isLoading: false }))
       .catch(error => {
         this.setState({ isLoading: false })
         console.error(error)
       });
-  }
+  }*/
 
-  componentDidMount() {
+  useEffect(() => {
+    fetchContacts()
+  })
+
+  /*componentDidMount() {
     this.fetchContacts();
-  }
+  }*/
 
   handleDeleteContact(id) {
     contactsService.remove(id)
@@ -36,7 +56,7 @@ class ContactList extends Component {
     }))
   }
 
-  render() {
+  
     const { contacts, isLoading } = this.state;
     return (
       contacts &&
@@ -61,7 +81,6 @@ class ContactList extends Component {
           )}
         </>
     );
-  }
 
 }
 

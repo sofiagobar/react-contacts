@@ -1,14 +1,30 @@
-import { Component } from "react";
+import { Component  } from "react";
+import { useEffect, useState } from "react/cjs/react.production.min";
 
 import contactsService from '../../../services/contacts-service';
 
-class ContactDetails extends Component {
+function ContactDetails(props) {
 
-  state = {
+  const [contact, setContact] = useState(null);
+  /*state = {
     contact: null
-  }
+  }*/
 
-  componentDidMount() {
+
+  useEffect(() => {
+    const id = props.match?.params?.id;
+    contactsService.details(id)
+      .then(contact => setContact({ contact }))
+      .catch(error => {
+        console.error(error);
+        if (error.response?.status === 404) {
+          props.history.push('/404');
+        }
+      });
+  }, []) 
+
+
+  /*componentDidMount() {
     const id = this.props.match?.params?.id;
     contactsService.details(id)
       .then(contact => this.setState({ contact }))
@@ -18,10 +34,12 @@ class ContactDetails extends Component {
           this.props.history.push('/404');
         }
       });
-  }
+  }*/
 
-  render() {
-    const { contact } = this.state;
+  
+    //const { contact } = this.state;
+
+    //const { contact } = contact;
     return contact && (
       <div className="card mb-3">
         <div className="row g-0">
@@ -37,7 +55,6 @@ class ContactDetails extends Component {
         </div>
       </div>
     )
-  }
 }
 
 export default ContactDetails;

@@ -44,26 +44,32 @@ function ContactList() {
     this.fetchContacts();
   }*/
 
-  handleDeleteContact(id) {
+  function handleDeleteContact(id) {
     contactsService.remove(id)
-      .then(() => this.fetchContacts())
+      .then(() => fetchContacts())
       .catch(error => console.error(error));
   }
 
-  handleCreateContact(contact) {
-    this.setState(({ contacts }) => ({
+  function handleCreateContact(contact) {
+    setContacts((contacts) => ({
       contacts: [contact, ...contacts]
     }))
   }
 
+  /*handleCreateContact(contact) {
+    this.setState(({ contacts }) => ({
+      contacts: [contact, ...contacts]
+    }))
+  }*/
+
   
-    const { contacts, isLoading } = this.state;
+    //const { contacts, isLoading } = this.state;
     return (
       contacts &&
         <>
           <div className="row mb-2">
             <div className="col">
-              <ContactForm onCreateContact={(contact) => this.handleCreateContact(contact)}/>
+              <ContactForm onCreateContact={(contact) => handleCreateContact(contact)}/>
             </div>
           </div>
           {isLoading ? (<i className="fa fa-gear fa-spin"></i>) : (
@@ -72,7 +78,7 @@ function ContactList() {
                 <ul className="list-group">
                   {contacts.map(contact =>
                     <li key={contact.id} className="list-group-item list-group-item-action">
-                      <ContactItem {...contact} onDeleteContact={(id) => this.handleDeleteContact(id)} />
+                      <ContactItem {...contact} onDeleteContact={(id) => handleDeleteContact(id)} />
                     </li>
                   )}
                 </ul>
